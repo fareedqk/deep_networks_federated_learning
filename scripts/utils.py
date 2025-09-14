@@ -1,8 +1,12 @@
 import copy
+import ssl
 import torch
 from torchvision import datasets, transforms
 from sampling import mnist_iid, mnist_noniid, mnist_noniid_unequal
 from sampling import cifar_iid, cifar_noniid
+
+# Fix SSL certificate verification issues for dataset downloads
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 def get_dataset(args):
@@ -25,10 +29,10 @@ def get_dataset(args):
 
         # sample training data amongst users
         if args.iid:
-            # Sample IID user data from Mnist
+            # Sample IID user data from CIFAR
             user_groups = cifar_iid(train_dataset, args.num_users)
         else:
-            # Sample Non-IID user data from Mnist
+            # Sample Non-IID user data from CIFAR
             if args.unequal:
                 # Chose uneuqal splits for every user
                 raise NotImplementedError()
@@ -36,12 +40,8 @@ def get_dataset(args):
                 # Chose euqal splits for every user
                 user_groups = cifar_noniid(train_dataset, args.num_users)
 
-    elif args.dataset == 'mnist' or 'fmnist':
-        if args.dataset == 'mnist':
-            data_dir = '../data/mnist/'
-        else:
-            data_dir = '../data/fmnist/'
-
+    elif args.dataset == 'mnist':
+        data_dir = '../data/mnist/'
         apply_transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.1307,), (0.3081,))])
@@ -52,7 +52,20 @@ def get_dataset(args):
         test_dataset = datasets.MNIST(data_dir, train=False, download=True,
                                       transform=apply_transform)
 
-        # sample training data amongst users
+    elif args.dataset == 'fmnist':
+        data_dir = '../data/fmnist/'
+        apply_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.2860,), (0.3530,))])
+
+        train_dataset = datasets.FashionMNIST(data_dir, train=True, download=True,
+                                             transform=apply_transform)
+
+        test_dataset = datasets.FashionMNIST(data_dir, train=False, download=True,
+                                            transform=apply_transform)
+
+    # sample training data amongst users (for both MNIST and Fashion-MNIST)
+    if args.dataset in ['mnist', 'fmnist']:
         if args.iid:
             # Sample IID user data from Mnist
             user_groups = mnist_iid(train_dataset, args.num_users)

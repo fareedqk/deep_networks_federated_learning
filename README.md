@@ -18,26 +18,29 @@ To use your own dataset: place it in the `data/` directory and implement a PyTor
 
 Baseline experiment: trains the model centrally (conventional training).
 
-```python src/baseline_main.py --model=cnn --dataset=mnist --epochs=10```
+~~~
+python scripts/baseline_main.py --model=cnn --dataset=mnist --epochs=10
+~~~
 
 To run on GPU (e.g., GPU 0):
 
-```python src/baseline_main.py --model=cnn --dataset=mnist --gpu=0 --epochs=10```
+~~~
+python scripts/baseline_main.py --model=cnn --dataset=mnist --gpu=0 --epochs=10
+~~~
 
 Federated experiment: trains a global model from local client updates.
 
 IID data:
 
-```python src/federated_main.py --model=cnn --dataset=cifar --gpu=0 --iid=1 --epochs=10```
+~~~
+python scripts/federated_main.py --model=cnn --dataset=cifar --gpu=0 --iid=1 --epochs=10
+~~~
 
 Non-IID data:
 
-```python src/federated_main.py --model=cnn --dataset=cifar --gpu=0 --iid=0 --epochs=10```
-
-
-## Running the experiments
-
-Baseline experiment: trains the model centrally (conventional training).
+~~~
+python scripts/federated_main.py --model=cnn --dataset=cifar --gpu=0 --iid=0 --epochs=10
+~~~
 
 
 Other parameters can be adjusted in the options section.
@@ -63,19 +66,42 @@ Default parameters can be found and changed in `options.py`, including:
 - `--local_bs`: Batch size in local training (default: 10)
 - `--unequal`: Split data equally (0) or unequally (1) in non-IID setting
 
-## Results
+## Results on MNIST
 
-The federated approach achieves comparable performance to centralized training on multiple datasets, demonstrating effective privacy-preserving collaborative learning. Model accuracy varies with data distribution and training configurations.
+Baseline Experiment:
+The experiment involves training a single model in the conventional way.
 
-| Model | Dataset | IID Accuracy | Non-IID Accuracy |
-|-------|---------|--------------|------------------|
-| CNN   | MNIST   | 98.5%        | 85.3%            |
-| MLP   | CIFAR10 | 78.9%        | 65.4%            |
+Parameters:
+
+```Optimizer```: SGD\
+```Learning Rate```: 0.01
+
+Table 1: Test accuracy after training for 10 epochs:
+
+| Model | Test Acc| 
+|-------|---------|
+| MLP   | 91.7    | 
+| MLP   | 95.3    | 
+
+Federated Experiment:
+
+The experiment involves training a global model in the federated setting.
+
+Federated parameters (default values):
+
+```Fraction of users (C)```: 0.1\
+```Local Batch size  (B)```: 10\
+```Local Epochs      (E)```: 10\
+```Optimizer            ```: SGD\
+```Learning Rate        ```: 0.01
+
+Table 2: Test accuracy after training for 10 global epochs with:
+
+| Model | IID     | Non-IID |
+|-------|---------|---------|
+| MLP   | 87.3    | 72.4    |
+| CNN   | 96.3    | 74.9    |
 
 ## Contributing
 
-Contributions and suggestions are welcome. Please fork the repo and open a pull request with your changes.
-
-## License
-
-MIT
+Contributions and suggestions are welcome. Please fork the repo and open a pull request with your changes, ciao.

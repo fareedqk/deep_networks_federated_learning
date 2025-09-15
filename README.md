@@ -81,7 +81,7 @@ Table 1: Test accuracy after training for 10 epochs:
 | Model | Test Acc| 
 |-------|---------|
 | MLP   | 91.7    | 
-| MLP   | 95.3    | 
+| CNN   | 95.3    | 
 
 Federated Experiment:
 
